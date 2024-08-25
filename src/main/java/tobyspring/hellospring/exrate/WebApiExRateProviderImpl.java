@@ -25,20 +25,30 @@ public class WebApiExRateProviderImpl implements ExRateProvider {
         }
         String response;
         try {
-            HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                response = br.lines().collect(Collectors.joining());
-            }
+            response = executeApi(uri);
         }catch (IOException e){
             throw new RuntimeException(e);
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            ExRateDate data = mapper.readValue(response, ExRateDate.class);
-            return data.rates().get("KRW");
+            return parseExrate(response);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private BigDecimal parseExrate(String response) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ExRateDate data = mapper.readValue(response, ExRateDate.class);
+        return data.rates().get("KRW");
+    }
+
+    private String executeApi(URI uri) throws IOException {
+        String response;
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            response = br.lines().collect(Collectors.joining());
+        }
+        return response;
     }
 }
