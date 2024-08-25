@@ -16,8 +16,12 @@ public class WebApiExRateProviderImpl implements ExRateProvider {
 
     @Override
     public BigDecimal getExRate(String currency) {
-        URI uri;
         String url = "https://open.er-api.com/v6/latest/" + currency;
+        return runApiForExRate(url);
+    }
+
+    private BigDecimal runApiForExRate(String url) {
+        URI uri;
         try {
             uri = new URI(url);
         } catch (URISyntaxException e) {
@@ -29,15 +33,14 @@ public class WebApiExRateProviderImpl implements ExRateProvider {
         }catch (IOException e){
             throw new RuntimeException(e);
         }
-
         try {
-            return parseExrate(response);
+            return extractExRate(response);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private BigDecimal parseExrate(String response) throws JsonProcessingException {
+    private BigDecimal extractExRate(String response) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ExRateDate data = mapper.readValue(response, ExRateDate.class);
         return data.rates().get("KRW");
