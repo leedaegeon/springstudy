@@ -35,6 +35,10 @@ public class Order {
         return no;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public BigDecimal getTotal() {
         return total;
     }
