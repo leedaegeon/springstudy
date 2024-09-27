@@ -24,11 +24,5 @@ public class Client {
         PaymentService paymentService = beanFactory.getBean(PaymentService.class);
         Payment payment = paymentService.prepare(100L, "USD", BigDecimal.valueOf(50.7));
         System.out.println(payment);
-
-        OrderService service = beanFactory.getBean(OrderService.class);
-
-        Order order = service.createOrder("0100", BigDecimal.TEN);
-        System.out.println(order);
-
     }
 }
